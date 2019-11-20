@@ -86,6 +86,12 @@ client.on("message", async message => {
         message.channel.send(sayMessage);
     }
 
+    var bannedword = "faggot";
+    if (message.content.includes(bannedword)) {
+        message.author.send("Chill friendo, saying ${bannedword} isn't allowed!");
+        message.delete().catch(O_o => { });
+    }
+
     if (command === "kick") {
         // This command must be limited to mods and admins. In this example we just hardcode the role names.
         // Please read on Array.some() to understand this bit: 
