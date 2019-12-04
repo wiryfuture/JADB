@@ -86,10 +86,9 @@ client.on("message", async message => {
         message.channel.send(sayMessage);
     }
 
-    var bannedword = "faggot";
-    if (message.content.includes(bannedword)) {
-        message.author.send('Chill friendo, saying ${bannedword} isn\'t allowed!');
+    if (message.content.includes("faggot")) {
         message.delete().catch(O_o => { });
+        message.author.send("Chill friendo, saying \"faggot\" isn\'t allowed!");
     }
 
     if (command === "kick") {
