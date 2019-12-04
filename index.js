@@ -86,7 +86,7 @@ client.on("message", async message => {
         message.channel.send(sayMessage);
     }
 
-    if message.content.includes("faggot") {
+    if (message.content.includes('faggot')){
         message.delete().catch(O_o => { });
         message.author.send("Chill friendo, saying \"faggot\" isn\'t allowed!");
     }
