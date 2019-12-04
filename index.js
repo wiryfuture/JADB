@@ -87,7 +87,7 @@ client.on("message", async message => {
     }
 
     var bannedword = "faggot"
-    if (msg.content.includes($bannedword)){
+    if (msg.content.includes(bannedword)){
         msg.delete().catch(O_o => { });
         msg.author.send("Chill friendo, saying \"${msg.content}\" has a banned word in it!");
     }
