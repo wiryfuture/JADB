@@ -86,7 +86,7 @@ client.on("message", async message => {
         message.channel.send(sayMessage);
     }
 
-    var bannedword = ["faggot","nigger"]
+    var bannedword = ["faggot","nigger","racistwordhere"]
    
 
     bannedword.forEach(element => {
