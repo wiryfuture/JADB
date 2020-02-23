@@ -87,7 +87,7 @@ client.on("message", async message => {
     }
 
     var fs = require("fs");
-    var bannedwords = fs.readFile("https://www.cs.cmu.edu/~biglou/resources/bad-words.txt", "utf8", function (error, data) {
+    fs.readFile("https://www.cs.cmu.edu/~biglou/resources/bad-words.txt", "utf8", function (error, data) {
         if (error) {
             console.log('Error:- ' + error);
             throw error;
