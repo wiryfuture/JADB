@@ -1,5 +1,6 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
+var request = require('request');
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
@@ -86,8 +87,9 @@ client.on("message", async message => {
         message.channel.send(sayMessage);
     }
 
-    var fs = require("fs");
-    fs.readFile("https://www.cs.cmu.edu/~biglou/resources/bad-words.txt", "utf8", function (error, data) {
+    //var request = require('request');
+    //tries to get the list of banned words from a url (online)
+    request.get("https://philipw.ml/discordbot/bannedwords.txt", "utf8", function (error, data) {
         if (error) {
             console.log('Error:- ' + error);
             throw error;
