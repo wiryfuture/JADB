@@ -87,8 +87,14 @@ client.on("message", async message => {
     }
 
     var fs = require("fs");
-    var bannedwords = fs.readFile("https://www.cs.cmu.edu/~biglou/resources/bad-words.txt","utf8");
-    var bannedwords = bannedwords.split("\n");
+    var bannedwords = fs.readFile("www.cs.cmu.edu/~biglou/resources/bad-words.txt", "utf8", function (error, data) {
+        if (error) {
+            console.log('Error:- ' + error);
+            throw error;
+        }
+        var bannedwords = data.split("\n");
+    }
+    //var bannedwords = bannedwords.split("\n");
 
     bannedwords.forEach(element => {
         lowercasemessagecontent = message.content.toLowerCase()
