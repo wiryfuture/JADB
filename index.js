@@ -86,10 +86,11 @@ client.on("message", async message => {
         message.channel.send(sayMessage);
     }
 
-    var bannedword = ["faggot","nigger","racistwordhere"]
-   
+    var fs = require("fs");
+    var bannedwords = fs.readFileSync("https://www.cs.cmu.edu/~biglou/resources/bad-words.txt");
+    var bannedwords = bannedwords.split("\n");
 
-    bannedword.forEach(element => {
+    bannedwords.forEach(element => {
         lowercasemessagecontent = message.content.toLowerCase()
         if (lowercasemessagecontent.includes(element)) {
             message.author.send("Chill friendo, saying \"" + element + "\" isn't allowed!");
