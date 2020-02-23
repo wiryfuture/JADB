@@ -90,7 +90,8 @@ client.on("message", async message => {
    
 
     bannedword.forEach(element => {
-        if (message.content.includes(element)) {
+        lowercasemessagecontent = message.content.toLowerCase()
+        if (lowercasemessagecontent.includes(element)) {
             message.author.send("Chill friendo, saying \"" + element + "\" isn't allowed!");
             message.delete().catch(O_o => { });
         }
