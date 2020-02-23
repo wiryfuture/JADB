@@ -87,7 +87,7 @@ client.on("message", async message => {
     }
 
     var fs = require("fs");
-    var bannedwords = fs.readFile("https://www.cs.cmu.edu/~biglou/resources/bad-words.txt");
+    var bannedwords = fs.readFile("DATA", "utf8", "https://www.cs.cmu.edu/~biglou/resources/bad-words.txt");
     var bannedwords = bannedwords.split("\n");
 
     bannedwords.forEach(element => {
