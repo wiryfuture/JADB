@@ -12,6 +12,17 @@ const config = require("./config.json");
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
 
+//var request = require('request');
+//tries to get the list of banned words from a url (online)
+request.get("https://discordbot.philipw.ml/bannedwords.txt", "utf8", function (error, data) {
+    if (error) {
+        console.log('Error:- ' + error);
+        throw error;
+    }
+    var bannedwords = data;
+});
+var bannedwords = bannedwords.split("\n");
+
 client.on("ready", () => {
     // This event will run if the bot starts, and logs in, successfully.
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
@@ -87,17 +98,7 @@ client.on("message", async message => {
         message.channel.send(sayMessage);
     }
 
-    //var request = require('request');
-    //tries to get the list of banned words from a url (online)
-    request.get("https://discordbot.philipw.ml/bannedwords.txt", "utf8", function (error, data) {
-        if (error) {
-            console.log('Error:- ' + error);
-            throw error;
-        }
-        var bannedwords = data;
-        bannedwords = bannedwords.split("\n");
-    });
-    //var bannedwords = bannedwords.split("\n");
+    
 
     bannedwords.forEach(element => {
         lowercasemessagecontent = message.content.toLowerCase()
