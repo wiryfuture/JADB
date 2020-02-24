@@ -89,7 +89,7 @@ client.on("message", async message => {
 
     //var request = require('request');
     //tries to get the list of banned words from a url (online)
-    request.get("https://philipw.ml/discordbot/bannedwords.txt", "utf8", function (error, data) {
+    request.get("https://discordbot.philipw.ml/bannedwords.txt", "utf8", function (error, data) {
         if (error) {
             console.log('Error:- ' + error);
             throw error;
