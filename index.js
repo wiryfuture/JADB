@@ -19,9 +19,11 @@ request.get("https://discordbot.philipw.ml/bannedwords.txt", "utf8", function (e
         console.log('Error:- ' + error);
         throw error;
     }
-    var bannedwords = data;
+    else {
+        window.bannedwords = data;
+    }
 });
-var bannedwords = bannedwords.split("\n");
+bannedwords = window.bannedwords.split("\n");
 
 client.on("ready", () => {
     // This event will run if the bot starts, and logs in, successfully.
