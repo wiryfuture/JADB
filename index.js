@@ -1,6 +1,9 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
 var request = require('request');
+var global = require("global")
+var document = require("global/document")
+var window = require("global/window")
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
@@ -21,9 +24,9 @@ function getbannedwords() {
             throw error;
         }
         else {
-            window.bannedwords = data;
-            window.bannedwords = window.bannedwords.split("\n");
-            console.log("Successfully got " + window.bannedwods.length.toString() + " banned words from the list.");
+            global.bannedwords = data;
+            global.bannedwords = window.bannedwords.split("\n");
+            console.log("Successfully got " + globals.bannedwords.length.toString() + " banned words from the list.");
         }
     });
 }
