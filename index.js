@@ -25,7 +25,7 @@ function getbannedwords() {
         }
         else {
             global.bannedwords = data;
-            global.bannedwords = window.bannedwords.split("\n");
+            global.bannedwords = global.bannedwords.split("\n");
             console.log("Successfully got " + globals.bannedwords.length.toString() + " banned words from the list.");
         }
     });
