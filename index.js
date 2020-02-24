@@ -94,7 +94,8 @@ client.on("message", async message => {
             console.log('Error:- ' + error);
             throw error;
         }
-        var bannedwords = data.split("\n");
+        var bannedwords = data;
+        bannedwords = bannedwords.split("\n");
     });
     //var bannedwords = bannedwords.split("\n");
 
