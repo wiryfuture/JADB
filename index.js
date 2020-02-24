@@ -24,7 +24,8 @@ function getbannedwords() {
             throw error;
         }
         else {
-            global.bannedwords = data;
+            console.log(data);
+            global.bannedwords = data;  
             global.bannedwords = global.bannedwords.split("\n");
             console.log("Successfully got " + globals.bannedwords.length.toString() + " banned words from the list.");
         }
@@ -118,7 +119,7 @@ client.on("message", async message => {
 
     // Tries to check if the messages you send contain banned words and deletes them if they do (and sends you a reminder why!)
 
-    window.bannedwords.forEach(element => {
+    global.bannedwords.forEach(element => {
         lowercasemessagecontent = message.content.toLowerCase()
         if (lowercasemessagecontent.includes(element)) {
             message.author.send("Chill friendo, saying \"" + element + "\" isn't allowed!");
