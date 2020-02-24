@@ -14,20 +14,24 @@ const config = require("./config.json");
 
 //var request = require('request');
 //tries to get the list of banned words from a url (online)
-request.get("https://discordbot.philipw.ml/bannedwords.txt", "utf8", function (error, data) {
-    if (error) {
-        console.log('Error:- ' + error);
-        throw error;
-    }
-    else {
-        window.bannedwords = data;
-    }
-});
-bannedwords = window.bannedwords.split("\n");
+function getbannedwords() {
+    request.get("https://discordbot.philipw.ml/bannedwords.txt", "utf8", function (error, data) {
+        if (error) {
+            console.log('Error:- ' + error);
+            throw error;
+        }
+        else {
+            window.bannedwords = data;
+            window.bannedwords = window.bannedwords.split("\n");
+            console.log("Successfully got " + window.bannedwods.length.toString() + " banned words from the list.");
+        }
+    });
+}
 
 client.on("ready", () => {
     // This event will run if the bot starts, and logs in, successfully.
     console.log(`Bot has started, with ${client.users.size} users, in ${client.channels.size} channels of ${client.guilds.size} guilds.`);
+    getbannedwords();
     // Example of changing the bot's playing game to something useful. `client.user` is what the
     // docs refer to as the "ClientUser".
     client.user.setActivity(`Painfully suffering on ${client.guilds.size} servers`);
@@ -100,9 +104,18 @@ client.on("message", async message => {
         message.channel.send(sayMessage);
     }
 
-    
+    // lets a moderator reload the list of banned words (example use: the list has been updates)
+    if (command === "!reloadbannedwords") {
+        if (!message.member.roles.some(r => ["Moderator"].includes(r.name)))
+            return message.reply("Sorry, you don't have permissions to use this!");
+        // rus the function to get the list of banned words
+        getbannedwords();
+        message.channel.send("Reloaded banned words list.");
+    }
 
-    bannedwords.forEach(element => {
+    // Tries to check if the messages you send contain banned words and deletes them if they do (and sends you a reminder why!)
+
+    window.bannedwords.forEach(element => {
         lowercasemessagecontent = message.content.toLowerCase()
         if (lowercasemessagecontent.includes(element)) {
             message.author.send("Chill friendo, saying \"" + element + "\" isn't allowed!");
