@@ -4,6 +4,7 @@ var request = require('request');
 var global = require("global")
 var document = require("global/document")
 var window = require("global/window")
+var fs = require('fs');
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
@@ -24,11 +25,15 @@ function getbannedwords() {
             throw error;
         }
         else {
-            console.log(data);
-            global.bannedwords = data;  
-            global.bannedwords = global.bannedwords.split("\n");
+            bannedwordswebpage = data;
+            bannedwords = bannedwordswebpage.IncomingMessage.body;
+            console.log(bannedwords);
+            global.bannedwords = bannedwords.split("\n");
             console.log("Successfully got " + globals.bannedwords.length.toString() + " banned words from the list.");
         }
+
+        
+        //var textByLine = fs.readFileSync('dancers.txt').toString().split("\n");
     });
 }
 
