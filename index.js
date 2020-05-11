@@ -1,10 +1,9 @@
 // Load up the discord.js library
 const Discord = require("discord.js");
-var request = require('request');
-var global = require("global")
-var document = require("global/document")
-var window = require("global/window")
-var fs = require('fs');
+const global = require("global")
+const document = require("global/document")
+const window = require("global/window")
+const fs = require('fs');
 
 // This is your client. Some people call it `bot`, some people call it `self`, 
 // some might call it `cootchie`. Either way, when you see `client.something`, or `bot.something`,
@@ -12,29 +11,30 @@ var fs = require('fs');
 const client = new Discord.Client();
 
 // Here we load the config.json file that contains our token and our prefix values. 
-const config = require("./config.json");
+// old boomer code :: const config = require("./config.json");
+const { prefix, token, bannedwordslistname } = require("./config.json");
+
 // config.token contains the bot's token
 // config.prefix contains the message prefix.
+// config.bannedwordslistname contains the name of the file with the list of banned words
 
-//var request = require('request');
-//tries to get the list of banned words from a url (online)
-function getbannedwords() {
-    request.get("https://discordbot.philipw.ml/bannedwords.txt", "utf8", function (error, data) {
-        if (error) {
-            console.log('Error:- ' + error);
-            throw error;
+//tries to get the list of banned words from local file
+function getbannedwords(){
+    fs.readFile(bannedwordslistname, "utf8", (err, data) => {
+        console.log("Read word file successfully!");
+        global.bannedwords = data.split("\r\n");
+        console.log("Successfully got " + global.bannedwords.length.toString() + " banned words from the list.");
+    });
+
+}
+
+function mystatus(client){
+    if (client.guilds.cache.size == 1){
+        client.user.setActivity(`Straight vibing in a server`);
         }
         else {
-            bannedwordswebpage = data;
-            bannedwords = bannedwordswebpage.IncomingMessage.body;
-            console.log(bannedwords);
-            global.bannedwords = bannedwords.split("\n");
-            console.log("Successfully got " + globals.bannedwords.length.toString() + " banned words from the list.");
+            client.user.setActivity(`Vibing on ${client.guilds.cache.size} servers`);
         }
-
-        
-        //var textByLine = fs.readFileSync('dancers.txt').toString().split("\n");
-    });
 }
 
 client.on("ready", () => {
@@ -43,36 +43,20 @@ client.on("ready", () => {
     getbannedwords();
     // Example of changing the bot's playing game to something useful. `client.user` is what the
     // docs refer to as the "ClientUser".
-    client.user.setActivity(`Painfully suffering on ${client.guilds.size} servers`);
-
-    if (client.guilds.size == 1){
-    client.user.setActivity(`Painfully suffering on one server`);
-    }
-    else {
-    client.user.setActivity(`Painfully suffering on ${client.guilds.size} servers`);
-    }
+    mystatus(client);
+    
 });
 
 client.on("guildCreate", guild => {
     // This event triggers when the bot joins a guild.
     console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
-    if (client.guilds.size == 1) {
-        client.user.setActivity(`Painfully suffering on one server`);
-    }
-    else {
-        client.user.setActivity(`Painfully suffering on ${client.guilds.size} servers`);
-    }
+    mystatus(client);
 });
 
 client.on("guildDelete", guild => {
     // this event triggers when the bot is removed from a guild.
     console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
-    if (client.guilds.size == 1) {
-        client.user.setActivity(`Painfully suffering on one server`);
-    }
-    else {
-        client.user.setActivity(`Painfully suffering on ${client.guilds.size} servers`);
-    }
+    mystatus(client);
 });
 
 
@@ -83,6 +67,8 @@ client.on("message", async message => {
     // and not get into a spam loop (we call that "botception").
     if (message.author.bot) return;
 
+    // Commands that will run for all messages 
+
     // Also good practice to ignore any message that does not start with our prefix, 
     // which is set in the configuration file.
     //if (message.content.indexOf(config.prefix) !== 0) return;
@@ -91,30 +77,77 @@ client.on("message", async message => {
     // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
     // command = say
     // args = ["Is", "this", "the", "real", "life?"]
-    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const args = message.content.slice(prefix.length).trim().split(/ +/g);
     const command = args.shift().toLowerCase();
+    const guild = message.guild || null;
+
+    const messageasargs = message.content.trim().split(/ +/g);
+    // dontsay : variable to let bot send message
+    global.dontsay = 200;
+    // checks if you have the role to bypass the filter
+    if (!message.member.roles.cache.some(r => ["Moderator"].includes(r.name))) {
+        // For each banned word, 
+        global.bannedwords.forEach(element => {
+            // For each word in the message, check if they are equal.
+            messageasargs.forEach(word => {
+                lowercaseword = word.toLowerCase();
+                if (lowercaseword == element) {
+                    message.author.send("Chill buddy, saying \"" + element + "\" isn't allowed!");
+                    message.delete().catch(O_o => { });
+                    global.dontsay = 403;
+                }
+            });
+            /*
+            lowercasemessagecontent = message.content.toLowerCase();
+            if (lowercasemessagecontent.includes(element)) {
+                message.author.send("Chill buddy, saying \"" + element + "\" isn't allowed!");
+                message.delete().catch(O_o => { });
+                global.dontsay = 403;
+            }
+            */
+        });
+    }
+
+    // After this, the bot doesn't care about messages without a prefix
+    if (message.content.indexOf(prefix) !== 0) return;
 
     // Let's go with a few common example commands! Feel free to delete or change those.
 
-    if (command === "!ping") {
+    if (command === "say") {
+        // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
+        // To get the "message" itself we join the `args` back into a string with spaces: 
+        var sayMessage = args.join(" ");
+        // Then we delete the command message (sneaky, right?). The catch just ignores the error with a cute smiley thing.
+        message.delete().catch(O_o => { });
+
+        // Checks the bot doesn't say anything it's not allowed to
+
+        if (sayMessage.toLowerCase().includes("fortnite")) {
+            message.author.send("I'm not allowed to say \"" + "fortnite" + "\" :(");
+            global.dontsay = 403;
+        }
+
+        if (sayMessage.toLowerCase().includes("@")) {
+            sayMessage = sayMessage.replace("@", "@.");
+        }
+
+
+        // And we get the bot to say the thing: 
+        if (global.dontsay == 200) {
+            message.channel.send(sayMessage);
+        }
+    }
+
+
+    if (command === "ping") {
         // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
         // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
         const m = await message.channel.send("Ping?");
-        m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
-    }
-
-    if (command === "!say") {
-        // makes the bot say something and delete the message. As an example, it's open to anyone to use. 
-        // To get the "message" itself we join the `args` back into a string with spaces: 
-        const sayMessage = args.join(" ");
-        // Then we delete the command message (sneaky, right?). The catch just ignores the error with a cute smiley thing.
-        message.delete().catch(O_o => { });
-        // And we get the bot to say the thing: 
-        message.channel.send(sayMessage);
+        m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ws.ping)}ms`);
     }
 
     // lets a moderator reload the list of banned words (example use: the list has been updates)
-    if (command === "!reloadbannedwords") {
+    if (command === "reloadbannedwords") {
         if (!message.member.roles.some(r => ["Moderator"].includes(r.name)))
             return message.reply("Sorry, you don't have permissions to use this!");
         // rus the function to get the list of banned words
@@ -122,17 +155,7 @@ client.on("message", async message => {
         message.channel.send("Reloaded banned words list.");
     }
 
-    // Tries to check if the messages you send contain banned words and deletes them if they do (and sends you a reminder why!)
-
-    global.bannedwords.forEach(element => {
-        lowercasemessagecontent = message.content.toLowerCase()
-        if (lowercasemessagecontent.includes(element)) {
-            message.author.send("Chill friendo, saying \"" + element + "\" isn't allowed!");
-            message.delete().catch(O_o => { });
-        }
-    });
-
-    if (command === "!kick") {
+    if (command === "kick") {
         // This command must be limited to mods and admins. In this example we just hardcode the role names.
         // Please read on Array.some() to understand this bit: 
         // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/some?
@@ -160,7 +183,7 @@ client.on("message", async message => {
 
     }
 
-    if (command === "!ban") {
+    if (command === "ban") {
         // Most of this command is identical to kick, except that here we'll only let admins do it.
         // In the real world mods could ban too, but this is just an example, right? ;)
         if (!message.member.roles.some(r => ["Moderator"].includes(r.name)))
@@ -180,7 +203,7 @@ client.on("message", async message => {
         message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
     }
 
-    if (command === "!purge") {
+    if (command === "purge") {
         // This command removes all messages from all users in the channel, up to 100.
 
         // get the delete count, as an actual number.
@@ -195,6 +218,70 @@ client.on("message", async message => {
         message.channel.bulkDelete(fetched)
             .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
     }
+
+    if (command == "makerole") {
+        if (!guild) {
+            return message.reply("I can't make a role outside of a server.");
+        }
+
+        if (!message.member.roles.cache.some(r => ["Moderator"].includes(r.name))) {
+            return message.reply("No.");
+        }
+
+        if (!args[0] || !args[1]) {
+            return message.reply("You need to give me a name and colour.");
+        }
+
+        if (args[2]) {
+            return message.reply("Only two arguments pwease, name and colour kthx ahaha. >_<");
+        }
+
+        var rolename = args[0];
+        var rolecolour = args[1];
+
+        guild.roles.create({
+            data: {
+                name: rolename,
+                color: rolecolour,
+                mentionable: false,
+            },
+            reason: "<@" + message.author + "> asked for this role.",
+        })
+            .then(message.channel.send("Made role with the name \"" + rolename + "\" and colour \"" + rolecolour + "\" thanks to <@" + message.author + ">"))
+            .catch(function (err) {
+                message.channel.send("I got an error but can\'t tell you it because I'm usewess o(〒﹏〒)o");
+                throw err;
+            });
+
+    }
+
+    if (command == "changerolecolour") {
+        if (!args[0]) {
+            return message.reply("Please give me a colour or do RANDOM, more info here https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable.");
+        }
+        if (args[1]) {
+            return message.reply("I only take one input, a colour, more info here https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable.")
+        }
+
+        newrolecolour = args[0];
+
+        let role = guild.roles.cache.find(role => role.name === "quirky");
+
+        role.setColor({ newrolecolour })
+            .then(message.channel.send("Changed role colour to " + newrolecolour))
+            .catch(message.reply("Please make sure you're providing a valid colour, more info on colours here https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable."));
+
+    }
+
+    
+
+    // Debugging command to check things
+
+    if (command == "debug") {
+        message.reply(args[0]);
+    }
+    
+    // End of code that manipulates messages
 });
 
-client.login(config.token);
+client.login(token);

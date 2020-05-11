@@ -1,0 +1,26 @@
+{
+  "name": "nyaaa",
+  "version": "1.0.0",
+  "description": "bot",
+  "main": "index.js",
+  "dependencies": {
+    "@discordjs/opus": "^0.3.2",
+    "discord.js": "github:discordjs/discord.js",
+    "global": "^4.4.0",
+    "nodemon": "^2.0.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wiryfuture/nyaaa.git"
+  },
+  "author": "wiryfuture",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wiryfuture/nyaaa/issues"
+  },
+  "homepage": "https://github.com/wiryfuture/nyaaa#readme"
+}
