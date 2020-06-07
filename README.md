@@ -5,4 +5,4 @@ To use,
 - insert your bot token in ``config.json``
 - lastly, install ``nodemon`` globally and run it ,as simple as entering ``nodemon`` in the console, order to start the bot.
 
-To invite the bot, get it's client ID and replace the numbers in this link with it https://discordapp.com/oauth2/authorize?client_id=123456789012345678&scope=bot.
+To invite the bot, get it's client ID and replace the numbers in this link with it https://discordapp.com/oauth2/authorize?client_id=123456789012345678&scope=bot&permissions=8.
