@@ -1,4 +1,4 @@
-# nyaaa
+# OpenMod
 The bot I decided to make for my discord server (and any other that may wish to use it).
 To use, 
 - download the files into a directory, and then using NodeJS/node install the packages it has in the ``package.json`` file. 
