@@ -1,8 +1,7 @@
 # OpenMod
-The bot I decided to make for my discord server (and any other that may wish to use it).
-To use, 
-- download the files into a directory, and then using NodeJS/node install the packages it has in the ``package.json`` file. 
-- insert your bot token in ``config.json``
-- lastly, install ``nodemon`` globally and run it ,as simple as entering ``nodemon`` in the console, order to start the bot.
+The bot I made, as I wanted to create a bot that does moderation a bit differently.
+If you simply want to try have this bot, invite it by clicking the link immediately below, otherwise, have a look around.
+https://discordapp.com/oauth2/authorize?client_id=646342929224302602&scope=bot&permissions=8
 
-To invite the bot, get it's client ID and replace the numbers in this link with it https://discordapp.com/oauth2/authorize?client_id=123456789012345678&scope=bot&permissions=8.
+# How to invite to your own server
+To invite the bot once you've gotten it working, get it's client ID and replace the numbers in this link with it https://discordapp.com/oauth2/authorize?client_id=123456789012345678&scope=bot&permissions=8.
