@@ -5,7 +5,10 @@
   "main": "index.js",
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
+    "better-sqlite3": "^7.0.1",
     "discord.js": "github:discordjs/discord.js",
+    "dotenv": "^8.2.0",
+    "enmap": "^5.2.4",
     "global": "^4.4.0",
     "nodemon": "^2.0.3"
   },
