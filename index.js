@@ -1,14 +1,34 @@
 // Load up the discord.js library
 const discord = require("discord.js");
 const global = require("global")
-const document = require("global/document")
-const window = require("global/window")
+//const document = require("global/document")
+//const window = require("global/window")
 const fs = require('fs');
-const enmap = require("enmap");
+const databaseproxy = require("./databases/databaseproxy.js");
+const configgenerator = require("./defaultfiles/envgen.js");
 
 // Load dotenv
 // Access by process.env.{KEY}
 const config = require('dotenv').config();
+if (config.error) {
+    console.warn("No environment file present, creating new one from default.");
+    let killprocess = configgenerator.makenew()
+    .then(() => {
+        process.exit();
+    });
+}
+// Checks if the config has been filled out (by the operator), things like the bot token or url of the database
+configgenerator.checkpresence();
+// Checks if the current env file is on the same update level as the default one
+async function configupdatewrapper(){
+    ismostrecent = await configgenerator.checkifrecent();
+    // Updates the main .env file if the default one is newer
+    if (!ismostrecent) {
+        configgenerator.update();
+    }
+}
+configupdatewrapper();
+
 // process.env.token {string} bot token
 // process.env.prefix {string} default bot prefix
 // process.env.bannedwordslistname {string} default blacklisted words file
@@ -25,6 +45,7 @@ myenmap.defer.then( () => {
 }); 
 */
 // Set enmap settings
+/*
 client.settings = new enmap({
     name: "settings",
     fetchAll: false,
@@ -51,22 +72,24 @@ const defaultsettings = {
     dowelcomemessage: false,
     usecustomfilterlist: false
 };
-
+*/
 const defaultwordfilter = {
     filename: "bannedwords.txt",
     words: ""
 };
 
 
-//tries to get the list of banned words from local file
-function getbannedwords(filename){
-    fs.readFile(filename, "utf8", (err, data) => {
-        console.log("Read word file successfully!");
-        bannedwords = data.split("\r\n");
-        console.log("Successfully got " + bannedwords.length + " banned words from the list.");
-        return bannedwords;
-    });
 
+//tries to get the list of banned words from local file
+async function getbannedwords(filename){
+    return new Promise((resolve, reject) => {
+        fs.readFile(filename, "utf8", (err, data) => {
+            console.log("Read word file successfully!");
+            bannedwords = data.split("\r\n");
+            console.log("Successfully got " + bannedwords.length + " banned words from the list.");
+            resolve(bannedwords);
+        });
+    });
 }
 
 function mystatus(client){
@@ -84,7 +107,7 @@ function mystatus(client){
 client.on("ready", () => {
     // This event will run if the bot starts, and logs in, successfully.
     console.log(`Bot has started, with ${client.users.cache.size} users, in ${client.channels.cache.size} channels of ${client.guilds.cache.size} guilds.`);
-    var defaultbannedwords = getbannedwords("bannedwords.txt");
+    const defaultbannedwords = getbannedwords("bannedwords.txt");
     // Example of changing the bot's playing game to something useful. `client.user` is what the
     // docs refer to as the "ClientUser".
     mystatus(client);
@@ -95,6 +118,7 @@ client.on("guildCreate", guild => {
     // This event triggers when the bot joins a guild.
     console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
     mystatus(client);
+    databaseproxy.newserver(guild.id);
 });
 
 client.on("guildDelete", guild => {
@@ -119,18 +143,23 @@ client.on("message", async message => {
     const guild = message.guild || null;
 
     if (guild == null) {
-        return message.reply("Seems you've slid into my DMs, unfortunately, I can't actually read anything you send here (yet!), sowwy  :sob: ");
+        return message.reply("Seems you've slid into my DMs, unfortunately, I'm not set up to be able to read them, lol :kissing_heart:  ");
     }
     
-    // Get the server settings, or get the default settings
-    const guildconf = client.settings.ensure(message.guild.id, defaultsettings);
+    // Get default server settings
+    //const guildconf = client.settings.ensure(message.guild.id, defaultsettings);
+    // Get default word filter setting
+    const guildwordfilter = "bannedwords.txt";
 
-    const guildwordfilter = client.wordfilter.ensure(message.guild.id, defaultwordfilter);
+    var guildid = guild.id;
+    // Gets the guild settings
+    
+    const guildsettings = await databaseproxy.getall(guildid);
 
     // Here we separate our "command" name, and our "arguments" for the command. 
     // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
     // args = ["Is", "this", "the", "real", "life?"]
-    const args = message.content.slice(guildconf.prefix.length).trim().split(/ +/g);
+    const args = message.content.slice(guildsettings.prefix.length).trim().split(/ +/g);
     // command = say   
     const command = args.shift().toLowerCase();
     const messageasargs = message.content.trim().split(/ +/g);
@@ -140,10 +169,11 @@ client.on("message", async message => {
     //if (!message.member.roles.cache.some(r => ["Moderator"].includes(r.name))) {
     // For each banned word, 
 
-    if (guildconf.filterwords) {
+    if (await databaseproxy.get(guild.id, "filterlanguage")) {
         // Checks messages against the default word filter
-        if (!guildconf.usecustomfilterlist) {
-            defaultbannedwords.forEach(element => {
+        if (true) {
+            var banwords = await getbannedwords("bannedwords.txt");
+            banwords.forEach(element => {
                 // assumes that the message does not violate the blacklist by default
                 violation = false;
                 // For each word in the message, check if they are equal to said banned word.
@@ -197,7 +227,7 @@ client.on("message", async message => {
     //}
 
     // After this, the bot doesn't care about messages without a prefix
-    if (message.content.indexOf(guildconf.prefix) !== 0) return;
+    if (message.content.indexOf(guildsettings.prefix) !== 0) return;
 
     // Let's go with a few common example commands! Feel free to delete or change those.
 
@@ -239,7 +269,7 @@ client.on("message", async message => {
         if (!message.member.roles.cache.some(r => ["Moderator"].includes(r.name)))
             return message.reply("Sorry, you don't have permissions to use this!");
         // rus the function to get the list of banned words
-        bannedwords = getbannedwords();
+        bannedwords = getbannedwords("bannedwords.txt");
         message.channel.send("Reloaded words from list.");
     }
 
@@ -247,13 +277,13 @@ client.on("message", async message => {
         // This command must be limited to mods and admins. In this example we just hardcode the role names.
         // Please read on Array.some() to understand this bit: 
         // https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/some?
-        if (!message.member.roles.some(r => ["Moderator"].includes(r.name)))
+        if (!message.member.roles.cache.some(r => ["Moderator"].includes(r.name)))
             return message.reply("Sorry, you don't have permissions to use this!");
 
         // Let's first check if we have a member and if we can kick them!
         // message.mentions.members is a collection of people that have been mentioned, as GuildMembers.
         // We can also support getting the member by ID, which would be args[0]
-        let member = message.mentions.members.first() || message.guild.members.get(args[0]);
+        let member = message.mentions.members.first() || message.guild.members.cache.get(args[0]);
         if (!member)
             return message.reply("Please mention a valid member of this server");
         if (!member.kickable)
@@ -267,14 +297,14 @@ client.on("message", async message => {
         // Now, time for a swift kick in the nuts!
         await member.kick(reason)
             .catch(error => message.reply(`Sorry ${message.author} I couldn't kick because of : ${error}`));
-        message.reply(`${member.user.tag} has been kicked by ${message.author.tag} because: ${reason}`);
+        message.channel.send(`${member.user} has been kicked by ${message.author} because: ${reason}`);
 
     }
 
     if (command === "ban") {
         // Most of this command is identical to kick, except that here we'll only let admins do it.
         // In the real world mods could ban too, but this is just an example, right? ;)
-        if (!message.member.roles.some(r => ["Moderator"].includes(r.name)))
+        if (!message.member.roles.cache.some(r => ["Moderator"].includes(r.name)))
             return message.reply("Sorry, you don't have permissions to use this!");
 
         let member = message.mentions.members.first();
@@ -288,7 +318,7 @@ client.on("message", async message => {
 
         await member.ban(reason)
             .catch(error => message.reply(`Sorry ${message.author} I couldn't ban because of : ${error}`));
-        message.reply(`${member.user.tag} has been banned by ${message.author.tag} because: ${reason}`);
+        message.channel.send(`${member.user} has been banned by ${message.author} because: ${reason}`);
     }
 
     if (command === "purge") {
@@ -378,7 +408,7 @@ client.on("message", async message => {
 
     // Command to set config
     if (command == "setconf") {
-        if (!message.member.roles.cache.some(r => [guildconf.adminrole].includes(r.name))) {
+        if (!message.member.roles.cache.some(r => [guildsettings.modrole].includes(r.name))) {
             return message.reply("You're not an admin, sowwy :(");
         }
         // Splits message into arguments
@@ -395,7 +425,7 @@ client.on("message", async message => {
 
     // Add a setting after an update, hopefully can be deprecated because   u   g   l   y
     if (command == "addconf") {
-        if (!message.member.roles.cache.some(r => [guildconf.adminrole].includes(r.name))) {
+        if (!message.member.roles.cache.some(r => [guildsettings.modrole].includes(r.name))) {
             return message.reply("You're not an admin, sowwy :(");
         }
          // Splits message into arguments
@@ -408,7 +438,7 @@ client.on("message", async message => {
 
     // Shows a server's config
     if(command === "showconf") {
-        if (!message.member.roles.cache.some(r => [guildconf.adminrole] == r.name)) {
+        if (!message.member.roles.cache.some(r => [guildsettings.modrole] == r.name)) {
             return message.reply("You're not an admin, sorry :(");
         }
         let configProps = Object.keys(guildconf).map(prop => {
