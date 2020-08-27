@@ -94,10 +94,10 @@ async function getbannedwords(filename){
 
 function mystatus(client){
     if (client.guilds.cache.size == 1){
-        client.user.setActivity(`Straight vibing in a server`);
+        client.user.setActivity(`Vibing in a server`);
         }
         else {
-            client.user.setActivity(`Vibing on ${client.guilds.cache.size} servers`);
+            client.user.setActivity(`Vibing in ${client.guilds.cache.size} servers`);
         }
 }
 
