@@ -30,11 +30,11 @@ module.exports = {
             mongoose.connection.on('error', console.error.bind(console, "\n   - - - MongoDB connection error! - - -\n"));
             mongoose.connection.once("open", function () {
                 // Finds the server with provided uuid and returns the piece of data that was requested
-                servermodel.findOne({ serveruuid: [uuid] }, function (err, data) {
+                servermodel.findOne({ serveruuid: [uuid] }, setting, function (err, data) {
                     mongoose.disconnect();
                     if (err) reject(err);
                     else {
-                        resolve(data.setting);
+                        resolve(data[setting]);
                     }
                 });
             });
