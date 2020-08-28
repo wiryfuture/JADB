@@ -1,5 +1,6 @@
 module.exports = {
     name: "ping",
+    cooldown: 5,
     description: "Pings the bot",
     async execute(client, message, args) {
         // Then we delete the command message (sneaky, right?). The catch just ignores the error with a cute smiley thing.

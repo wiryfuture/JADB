@@ -3,9 +3,13 @@ const path = require('path')
 const databaseproxy = require(path.normalize("../..//databases/databaseproxy.js"));
 */
 
+// cooldown is in seconds as an {Integer} or "none" as a {string}
+
 /*
 module.exports = {
     name: "commandnamehere",
+    cooldown: 2,
+    aliases: ["alias1","alias2"],
     description: "Description of what the command does",
     async execute(client, message, args) {
         // whatever the command does

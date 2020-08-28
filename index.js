@@ -38,6 +38,7 @@ configupdatewrapper();
 // this is what we're refering to. Your client.
 const client = new discord.Client();
 
+const cooldowns = new discord.Collection();
 client.servercommands = new discord.Collection();
 client.dmcommands = new discord.Collection();
 const servercommandFiles = fs.readdirSync('./commands/servercommands').filter(file => file.endsWith('.js'));
@@ -125,10 +126,55 @@ client.on("message", async message => {
         // command = say   
         const command = args.shift().toLowerCase();
         const messageasargs = message.content.trim().split(/ +/g);
+
+        
+        const commandcontent = client.dmcommands.get(command) || client.dmcommands.find(cmd => cmd.aliases && cmd.aliases.includes(command));
+        
+        if (!message.content.startsWith(prefix)) {
+            return;
+        }
+
+        if (!commandcontent) {
+            return message.reply("Failed to find the command \""+ command + "\".").then(message => {message.delete({timeout: 1000})}).catch(O_o => { });
+        }
+
+        //if (!client.servercommands.has(command)) return;
+
+        if (!cooldowns.has(dmcommand.name)) {
+            cooldowns.set(dmcommand.name, new discord.Collection());
+        }
+        
+        const now = Date.now();
+        const timestamps = cooldowns.get(commandcontent.name);
+        // Sets the cooldown time
+        var cooldownAmount;
+        if (commandcontent.cooldown == "none" || commandcontent.cooldown == 0){
+            cooldownAmount = 0;
+        }
+        else {
+            cooldownAmount = (commandcontent.cooldown || 3)* 1000;
+        }
+        
+        if (timestamps.has(message.author.id)) {
+            // ...
+        }
+
+        if (timestamps.has(message.author.id)) {
+            const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+        
+            if (now < expirationTime) {
+                const timeLeft = (expirationTime - now) / 1000;
+                return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${commandcontent.name}\` command.`);
+            }
+        }
+
+        timestamps.set(message.author.id, now);
+        setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+
         // If a command is present, execute it
-        if (!client.dmcommands.has(command)) return;
+        
         try {
-            client.dmcommands.get(command).execute(message, args);
+            commandcontent.execute(message, args);
         } catch (error) {
             console.error(error);
             message.reply('there was an error trying to execute that command!');
@@ -140,7 +186,7 @@ client.on("message", async message => {
         // Get prefix
         const prefix = await databaseproxy.get(guild.id, "prefix");
         // Get moderator role
-        const modrole = await databaseproxy.get(guild.id, "modrole");
+        //const modrole = await databaseproxy.get(guild.id, "modrole");
 
         // Here we separate our "command" name, and our "arguments" for the command. 
         // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
@@ -210,10 +256,57 @@ client.on("message", async message => {
             }
         };
 
+        const commandcontent = client.servercommands.get(command) || client.servercommands.find(cmd => cmd.aliases && cmd.aliases.includes(command));
+        
+        // Stop uncalled for replies
+        if (!message.content.startsWith(prefix)) {
+            return;
+        }
+
+        if (!commandcontent) {
+            return message.reply("Failed to find the command \""+ command + "\".").then(message => {message.delete({timeout: 1000})}).catch(O_o => { });
+        }
+        //if (!client.servercommands.has(command)) return;
+    
+
+        // Manages the command cooldowns
+        if (!cooldowns.has(commandcontent.name)) {
+            cooldowns.set(commandcontent.name, new discord.Collection());
+        }
+        // Gets the  current date and the command's cooldown time in ms
+        const now = Date.now();
+        const timestamps = cooldowns.get(commandcontent.name);
+        
+        // Sets the cooldown time
+        var cooldownAmount;
+        if (commandcontent.cooldown == "none" || commandcontent.cooldown == 0){
+            cooldownAmount = 0;
+        }
+        else {
+            cooldownAmount = (commandcontent.cooldown || 3)* 1000;
+        }
+        
+
+        if (timestamps.has(message.author.id)) {
+            // ...
+        }
+
+        if (timestamps.has(message.author.id)) {
+            const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+            // Checks if the expiry time for the cooldown has passed
+            if (now < expirationTime) {
+                const timeLeft = (expirationTime - now) / 1000;
+                return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${commandcontent.name}\` command.`);
+            }
+        }
+
+        timestamps.set(message.author.id, now);
+        setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+
         // If a command is present, execute it
-        if (!client.servercommands.has(command)) return;
+        
         try {
-            client.servercommands.get(command).execute(client, message, args);
+            commandcontent.execute(client, message, args);
         } catch (error) {
             console.error(error);
             message.reply('there was an error trying to execute that command!');
