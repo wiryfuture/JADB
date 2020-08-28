@@ -1,5 +1,6 @@
 module.exports = {
     name: "ping",
+    guildonly: false,
     cooldown: 5,
     description: "Pings the bot",
     async execute(client, message, args) {

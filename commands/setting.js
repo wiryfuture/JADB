@@ -1,16 +1,12 @@
-/* If database access if required
-const path = require('path')
-const databaseproxy = require(path.normalize("../..//databases/databaseproxy.js"));
-*/
-
-// cooldown is in seconds as an {Integer} or "none" as a {string}
-
+//const path = require('path')
+//const databaseproxy = require(path.normalize("..//databases/databaseproxy.js"));
 /*
 module.exports = {
-    name: "commandnamehere",
+    name: "setting",
     cooldown: 2,
-    aliases: ["alias1","alias2"],
-    description: "Description of what the command does",
+    guildonly: false,
+    aliases: ["set","config"],
+    description: "Used to change the settings of the bot on each server.",
     async execute(client, message, args) {
         // whatever the command does
     },

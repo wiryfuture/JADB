@@ -1,8 +1,9 @@
 const path = require('path')
-const databaseproxy = require(path.normalize("../..//databases/databaseproxy.js"));
+const databaseproxy = require(path.normalize("..//databases/databaseproxy.js"));
 
 module.exports = {
     name: "kick",
+    guildonly: true,
     description: "Kicks someone from a server",
     async execute(client, message, args) {
         // Gets the moderator role for the server

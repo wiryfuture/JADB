@@ -1,5 +1,6 @@
 module.exports = {
     name: "rolecolour",
+    guildonly: true,
     description: "Gets the colour of a role and displays it.",
     async execute(client, message, args) {
         let role = message.guild.roles.cache.find(role => role.name === args[0]);
@@ -17,7 +18,7 @@ module.exports = {
             },
             color: rolecolour,
             title: rolecolour,
-            description: "is the colour of \" " + args[0] + " \""
+            description: "is the colour of \"" + args[0] + "\""
         }}).then(message => {message.delete({timeout: 10000})}).catch(O_o => { });
     },
 }

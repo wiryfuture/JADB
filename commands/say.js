@@ -2,6 +2,7 @@ const discord = require("discord.js");
 
 module.exports = {
     name: "say",
+    guildonly: false,
     description: "Makes the bot say whatever you tell it.",
     async execute(client, message, args) {
         // makes the bot say something and delete the message. As an example, it's open to anyone to use. 

@@ -1,5 +1,6 @@
 module.exports = {
     name: "changerolecolour",
+    guildonly: true,
     description: "Changes the colour of the \"quirky\" role.",
     async execute(client, message, args) {
         if (!args[0]) {

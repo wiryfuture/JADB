@@ -1,8 +1,9 @@
 const path = require('path')
-const databaseproxy = require(path.normalize("../..//databases/databaseproxy.js"));
+const databaseproxy = require(path.normalize("..//databases/databaseproxy.js"));
 
 module.exports = {
     name: "purge",
+    guildonly: true,
     description: "Deletes the number of messages given",
     async execute(client, message, args) {
         // Gets the moderator role for the server
