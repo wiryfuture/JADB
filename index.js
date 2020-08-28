@@ -230,6 +230,7 @@ client.on("message", async message => {
         // Checks if the expiry time for the cooldown has passed
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
+            message.delete().catch(O_o => { });
             return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`).then(message => {message.delete({timeout: 1500})}).catch(O_o => { });
         }
     }
