@@ -1,3 +1,4 @@
+const discord = require('discord.js');
 const path = require('path')
 const databaseproxy = require(path.normalize("..//databases/databaseproxy.js"));
 
@@ -26,33 +27,19 @@ module.exports = {
             if (!command) {
                 return message.reply("I couldn't find the command you want help with, sorry.").then(message => {message.delete({timeout: 2500})}).catch(O_o => { });
             }
+
+            const helpembed = new discord.MessageEmbed()
+                .setColor("#9b59b6")
+                .setTitle(`What does \"${command.name}\" do ?`)
+                .setDescription(`${command.description}`);
+            
             if (command.aliases){
-                return message.author.send(
-                    {
-                        embed: {
-                            author: client.id,
-                            color: "#9b59b6",
-                            title: `What does \"${command.name}\" do ?`,
-                            description: `${command.description}`,
-                            fields: { name: "Aliases:", value: `${command.aliases.join(", ")}` }
-                        }
-                    }
-                );
+                helpembed.fields = { name: "Aliases:", value: `${command.aliases.join(", ")}` };
             }
             else {
-                return message.author.send(
-                    {
-                        embed: {
-                            author: client.id,
-                            color: "#9b59b6",
-                            title: `What does \"${command.name}\" do ?`,
-                            description: `${command.description}`,
-                            fields: { name: "Aliases:", value: "No aliases available." }
-                        }
-                    }
-                );
+                helpembed.fields = { name: "Aliases:", value: "No aliases available." };
             }
-            
+            return message.reply(helpembed); 
         }
 
         // Concludes that the user did not want help on a specific command, so sends a list of all commands available
