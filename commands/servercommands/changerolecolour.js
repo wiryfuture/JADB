@@ -14,7 +14,7 @@ module.exports = {
         let role = guild.roles.cache.find(role => role.name === "quirky");
         // Sets the role's new colour
         role.setColor(newrolecolour)
-            .then(message.channel.send("Changed quirky colour to " + newrolecolour))
+            .then(message.channel.send("Changed quirky colour to: " + newrolecolour))
             .catch(function (e) {
                 if (e instanceof TypeError) {
                     message.reply("Please make sure you're providing a valid colour, more info on colours here https://discord.js.org/#/docs/main/stable/typedef/ColorResolvable.");

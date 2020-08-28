@@ -5,7 +5,7 @@ module.exports = {
         let role = guild.roles.cache.find(role => role.name === args[0]);
         message.delete().catch(O_o => { });
         if (role == undefined) {
-            return message.reply("This role doesn't exist: \" " + args[0] +" \"").then(message => {message.delete({timeout: 3000})}).catch(O_o => { });
+            return message.reply("This role doesn't exist: \"" + args[0] +"\"").then(message => {message.delete({timeout: 3000})}).catch(O_o => { });
         }
         // Gets the role's colour
         rolecolour = role.hexColor;
