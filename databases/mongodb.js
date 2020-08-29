@@ -57,15 +57,32 @@ module.exports = {
             });
         });
     },
+    // Create a new document for a server using its uuid
     newserver: async function(uuid) {
         return new Promise((resolve, reject) => {
             // Connect to db
             mongoose.connect(process.env.databaseurl, { useNewUrlParser: true, useUnifiedTopology: true });
             mongoose.connection.on('error', console.error.bind(console, "\n   - - - MongoDB connection error! - - -\n"));
             mongoose.connection.once("open", function () {
-                // creates new entry under server with server uuid and defaults
+                // Create server model
                 var genericserverdoc = new servermodel({serveruuid : uuid})
+                // creates new entry under server with server uuid and defaults
                 genericserverdoc.save(function (err) {
+                    mongoose.disconnect();
+                    if (err) reject(err);
+                    else resolve(1);
+                });
+            });
+        });
+    },
+    // Delete a guild's document (for when the bot leaves a guild)
+    deleteserver: async function(uuid) {
+        return new Promise((resolve, reject) => {
+            // Connect to db
+            mongoose.connect(process.env.databaseurl, { useNewUrlParser: true, useUnifiedTopology: true });
+            mongoose.connection.on('error', console.error.bind(console, "\n   - - - MongoDB connection error! - - -\n"));
+            mongoose.connection.once("open",function () {
+                servermodel.deleteOne( { serveruuid: uuid }, function (err) {
                     mongoose.disconnect();
                     if (err) reject(err);
                     else resolve(1);

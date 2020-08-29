@@ -50,54 +50,21 @@ module.exports = {
                     reject("Not supported by current database.");  
             }
         });
+    },
+    deleteserver: async function(uuid){
+        return new Promise((resolve, reject) => {
+            switch(process.env.databasetype.toLowerCase()) {
+                // Checks if no database is selected.
+                case null:
+                    reject("No database selected.");
+                // Check if the database selected is mongodb, if then use mongodb function.
+                case "mongodb":
+                    resolve(mongodbmethods.deleteserver(uuid));
+                //  Assume that if the given database isn't listed, it does not support the function/feature.
+                default:
+                    reject("Not supported by current database.");  
+            }
+        })
     }
 
-
-    /*
-    newserver: async function(uuid){
-        return new Promise((resolve, reject) => {
-            if (process.env.databasetype == null) {
-                reject("No database selected.");
-            }
-            // Check if the database selected is mongodb, if then use mongodb function.
-            if (process.env.databasetype === "mongodb") {
-                resolve(mongodbmethods.newserver(uuid));
-            }
-            //  Assume that if the given database isn't listed, it does not support the function/feature.
-            else {
-                reject("Not supported by current database.");
-            }
-        }); 
-    },
-    get: async function(uuid, setting){
-        return new Promise((resolve, reject) => {
-            if (process.env.databasetype == null) {
-                reject("No database selected.");
-            }
-            // Check if the database selected is mongodb, if then use mongodb function.
-            if (process.env.databasetype === "mongodb") {
-                resolve( mongodbmethods.get(uuid,setting));
-            }
-            //  Assume that if the given database isn't listed, it does not support the function/feature.
-            else {
-                reject("Not supported by current database.")
-            }
-        });
-    },
-    getall: async function(uuid){
-        return new Promise((resolve, reject) => {
-            // Checks if no database is selected.
-            if (process.env.databasetype == null) {
-                reject("No database selected.");
-            }
-            // Check if the database selected is mongodb, if then use mongodb function.
-            if (process.env.databasetype === "mongodb") {
-                resolve( mongodbmethods.getall(uuid));
-            }
-            //  Assume that if the given database isn't listed, it does not support the function/feature.
-            else {
-                reject("Not supported by current database.")
-            }
-        });
-    }*/
 }

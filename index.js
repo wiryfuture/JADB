@@ -91,7 +91,7 @@ client.on("guildDelete", guild => {
     // this event triggers when the bot is removed from a guild.
     console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
     mystatus(client);
-    client.settings.delete(guild.id);
+    databaseproxy.deleteserver(guild.id);
 });
 
 client.on("message", async message => {
