@@ -38,10 +38,13 @@ configupdatewrapper();
 // this is what we're refering to. Your client.
 const client = new discord.Client();
 
+// Makes a collection for storing command cooldowns
 const cooldowns = new discord.Collection();
+// Makes a collection for storing all of the bot's commands
 client.commands = new discord.Collection();
+// Gets the commands for the bot from the command folder
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
-// Loads commands
+// Loads commands into the collection with the bot's commands
 for (const file of commandFiles) {
 	const botcommands = require(`./commands/${file}`);
 	// set a new item in the Collection
@@ -49,7 +52,7 @@ for (const file of commandFiles) {
 	client.commands.set(botcommands.name, botcommands);
 };
 
-//tries to get the list of banned words from local file
+//tries to read and return the list of banned words from local file
 async function getbannedwords(filename){
     return new Promise((resolve, reject) => {
         fs.readFile(filename, "utf8", (err, data) => {
@@ -61,6 +64,7 @@ async function getbannedwords(filename){
     });
 }
 
+// Sets the rich presence of the bot to say how many guilds it is in
 function mystatus(client){
     if (client.guilds.cache.size == 1){
         client.user.setActivity(`Vibing in a server`);
@@ -74,8 +78,7 @@ client.on("ready", () => {
     // This event will run if the bot starts, and logs in, successfully.
     console.log(`Bot has started, with ${client.users.cache.size} users, in ${client.channels.cache.size} channels of ${client.guilds.cache.size} guilds.`);
     const defaultbannedwords = getbannedwords("bannedwords.txt");
-    // Example of changing the bot's playing game to something useful. `client.user` is what the
-    // docs refer to as the "ClientUser".
+    // Update the bot's rich presence
     mystatus(client);
     
 });
@@ -83,14 +86,18 @@ client.on("ready", () => {
 client.on("guildCreate", guild => {
     // This event triggers when the bot joins a guild.
     console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
+    // Update the bot's rich presence
     mystatus(client);
+    // Create a new config file for the guild the bot has joined
     databaseproxy.newserver(guild.id);
 });
 
 client.on("guildDelete", guild => {
     // this event triggers when the bot is removed from a guild.
     console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
+    // Update the bot's rich presence
     mystatus(client);
+    // Remove the config for guilds the bot gets removed from
     databaseproxy.deleteserver(guild.id);
 });
 
@@ -108,7 +115,7 @@ client.on("message", async message => {
 
     // Only executes if a message is received in a DM
     if (guild == null || message.channel.type === 'dm') {
-        // Sets the prefix for the bot in people's DMs to this default, might add a global settings in db later
+        // Sets the prefix for the bot in people's DMs to this default, might add a global settings in .env later
         prefix = "!";
     }
 
@@ -117,7 +124,7 @@ client.on("message", async message => {
 
     // Only executes if a message is sent in a guild (most)    
     if (guild != null) {
-        // Get prefix for guilds
+        // Get prefix for guilds from the guild's config in the DB
         prefix = await databaseproxy.get(guild.id, "prefix");
 
         // dontsay : variable to let bot send message
@@ -211,7 +218,7 @@ client.on("message", async message => {
     const now = Date.now();
     const timestamps = cooldowns.get(command.name);
     
-    // Sets the cooldown time
+    // Sets the cooldown time, checking if it is 0, not set and defaulting to 3 seconds or however many seconds it is 
     var cooldownAmount;
     if (command.cooldown == "none" || command.cooldown == 0){
         cooldownAmount = 0;
@@ -219,12 +226,8 @@ client.on("message", async message => {
     else {
         cooldownAmount = (command.cooldown || 3)* 1000;
     }
-    
 
-    if (timestamps.has(message.author.id)) {
-        // ...
-    }
-
+    // Checks if the command issuer is in the cooldown list
     if (timestamps.has(message.author.id)) {
         const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
         // Checks if the expiry time for the cooldown has passed
@@ -235,18 +238,20 @@ client.on("message", async message => {
         }
     }
 
+    // Adds the command issuer to the cooldwon list
     timestamps.set(message.author.id, now);
     setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
-    // If a command is present, execute it
-    
+    // Executes the command given by the issuer
     try {
         command.execute(client, message, args);
     } catch (error) {
+        // Tells the user if the command failed to run
         console.error(error);
         message.reply('there was an error trying to execute that command!');
     }
 
 });
 
+// Starts the bot
 client.login(process.env.token);
