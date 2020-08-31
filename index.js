@@ -4,7 +4,10 @@ const global = require("global")
 //const document = require("global/document")
 //const window = require("global/window")
 const fs = require('fs');
+// Imports the functions from the database proxy, which reads the database type from the bot's .env file.
+// This means that when you want to use a different database, you just have to import the functions from a script with functions for that db, add it in the proxy script
 const databaseproxy = require("./databases/databaseproxy.js");
+// Imports the functions from the config generator file
 const configgenerator = require("./defaultfiles/envgen.js");
 
 // Load dotenv
