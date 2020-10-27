@@ -8,7 +8,7 @@
     "discord.js": "github:discordjs/discord.js",
     "dotenv": "^8.2.0",
     "global": "^4.4.0",
-    "mongoose": "^5.10.10",
+    "mongoose": "^5.10.11",
     "nodemon": "^2.0.6"
   },
   "devDependencies": {},
