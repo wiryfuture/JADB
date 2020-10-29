@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 
 // Server Schema
 var serverschema = new mongoose.Schema({
-    serveruuid: String,
+    serveruuid: {type: String},
+    //erveruuid: {type: String},
     datejoined: {type: Date, default: Date.now},
     prefix: {type: String, default: "!"},
     logging: {type: Boolean, default: false},
@@ -29,8 +30,8 @@ module.exports = {
             mongoose.connect(process.env.databaseurl, { useNewUrlParser: true, useUnifiedTopology: true });
             mongoose.connection.on('error', console.error.bind(console, "\n   - - - MongoDB connection error! - - -\n"));
             mongoose.connection.once("open", function () {
-                // Finds the server with provided uuid and returns the piece of data that was requested
-                servermodel.findOne({ serveruuid: [uuid] }, setting, function (err, data) {
+                // Finds the server with provided uuid and returns the piece of data that was requested    
+                servermodel.findOne( {"serveruuid": uuid } , setting, function (err, data) {
                     mongoose.disconnect();
                     if (err) reject(err);
                     else {
@@ -47,7 +48,7 @@ module.exports = {
             mongoose.connection.on('error', console.error.bind(console, "\n   - - - MongoDB connection error! - - -\n"));
             mongoose.connection.once("open", function () {
                 // Finds the server with provided uuid and returns all the data available (avoid use if possible)
-                servermodel.findOne({ serveruuid: [uuid] }, function (err, data) {
+                servermodel.findOne({ "serveruuid": uuid }, function (err, data) {
                     mongoose.disconnect();
                     if (err) reject(err);
                     else {
@@ -65,12 +66,13 @@ module.exports = {
             mongoose.connection.on('error', console.error.bind(console, "\n   - - - MongoDB connection error! - - -\n"));
             mongoose.connection.once("open", function () {
                 // Create server model
-                var genericserverdoc = new servermodel({serveruuid : uuid})
+                var genericserverdoc = new servermodel({"serveruuid": uuid})
+                //genericserverdoc.serveruuid = uuid;
                 // creates new entry under server with server uuid and defaults
                 genericserverdoc.save(function (err) {
                     mongoose.disconnect();
                     if (err) reject(err);
-                    else resolve(1);
+                    else resolve();
                 });
             });
         });
@@ -82,10 +84,24 @@ module.exports = {
             mongoose.connect(process.env.databaseurl, { useNewUrlParser: true, useUnifiedTopology: true });
             mongoose.connection.on('error', console.error.bind(console, "\n   - - - MongoDB connection error! - - -\n"));
             mongoose.connection.once("open",function () {
-                servermodel.deleteOne( { serveruuid: uuid }, function (err) {
+                servermodel.deleteOne( {"serveruuid": uuid }, function (err) {
                     mongoose.disconnect();
                     if (err) reject(err);
-                    else resolve(1);
+                    else resolve();
+                });
+            });
+        });
+    },
+    set: async function(uuid, setting, value) {
+        return new Promise((resolve, reject) => {
+            // Connect to db
+            mongoose.connect(process.env.databaseurl, {useNewUrlParser: true, useUnifiedTopology: true });
+            mongoose.connection.on('error', console.error.bind(console, "\n   - - - MongoDB connection error! - - -\n"));
+            mongoose.connection.once("open", function () {
+                servermodel.updateOne( {"serveruuid": uuid}, {[setting]: value}, function (err) {
+                    mongoose.disconnect();
+                    if (err) reject(err);
+                    else resolve();
                 });
             });
         });

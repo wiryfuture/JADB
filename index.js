@@ -55,6 +55,16 @@ for (const file of commandFiles) {
 	client.commands.set(botcommands.name, botcommands);
 };
 
+// Makes a collection for storing settings available to the user
+client.settings = new discord.Collection();
+// Lodas settings into an object
+const settingfiles = fs.readdirSync("./settings").filter(file => file.endsWith(".js"));
+// loads settings into collection with bot settings
+for (const file of settingfiles) {
+    const botsettings = require(`./settings/${file}`);
+    client.settings.set(botsettings.name, botsettings);
+}
+
 //tries to read and return the list of banned words from local file
 async function getbannedwords(filename){
     return new Promise((resolve, reject) => {
@@ -208,6 +218,7 @@ client.on("message", async message => {
     }
 
     if (!command) {
+        message.delete().catch(O_o => { });
         return message.reply("Failed to find the command \""+ commandName + "\".").then(message => {message.delete({timeout: 2000})}).catch(O_o => { });
     }
     //if (!client.commands.has(commandName)) return;

@@ -64,7 +64,21 @@ module.exports = {
                 default:
                     reject("Not supported by current database.");  
             }
-        })
+        });
+    },
+    set: async function(uuid, setting, value){
+        return new Promise((resolve, reject) => {
+            switch(process.env.databasetype.toLowerCase()) {
+                // Checks if no database is selected.
+                case null:
+                    reject("No database selected.");
+                // Check if the database selected is mongodb, if then use mongodb function.
+                case "mongodb":
+                    resolve(mongodbmethods.set(uuid, setting, value));
+                //  Assume that if the given database isn't listed, it does not support the function/feature.
+                default:
+                    reject("Not supported by current database.");  
+            }
+        });
     }
-
 }
