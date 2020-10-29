@@ -4,12 +4,12 @@
   "description": "bot",
   "main": "index.js",
   "dependencies": {
-    "@discordjs/opus": "^0.3.2",
+    "@discordjs/opus": "^0.3.3",
     "discord.js": "github:discordjs/discord.js",
     "dotenv": "^8.2.0",
     "global": "^4.4.0",
-    "mongoose": "^5.10.7",
-    "nodemon": "^2.0.4"
+    "mongoose": "^5.10.11",
+    "nodemon": "^2.0.6"
   },
   "devDependencies": {},
   "scripts": {
