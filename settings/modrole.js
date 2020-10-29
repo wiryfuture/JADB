@@ -23,8 +23,6 @@ module.exports = {
                 .then((err) => {
                     if (err) reject(err);
                     else resolve(message.reply("Set moderator role to: \""+ args[0] + "\""));
-                }).catch((err) => {
-                    console.log("fuck", err);
                 });
             })
             
