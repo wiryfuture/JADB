@@ -59,7 +59,7 @@ for (const file of commandFiles) {
 client.settings = new discord.Collection();
 // Lodas settings into an object
 const settingfiles = fs.readdirSync("./settings").filter(file => file.endsWith(".js"));
-// loads settings into collection with bot settings
+// loads settings into collec tion with bot settings
 for (const file of settingfiles) {
     const botsettings = require(`./settings/${file}`);
     client.settings.set(botsettings.name, botsettings);
@@ -155,7 +155,7 @@ client.on("message", async message => {
                         // For each word in the message, check if they are equal to said banned word.
                         messageasargs.forEach(word => {
                             lowercaseword = word.toLowerCase();
-                            if (lowercaseword == element) {
+                            if (lowercaseword === element) {
                                 violation = true;
                             }
                         });
