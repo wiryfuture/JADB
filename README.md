@@ -1,9 +1,9 @@
-# OpenMod
-This bot intends to do everything you need in your server in terms of moderation or else, and gives you the option of using the public on or self-hosting.<br/>
+# JADB
+JADB (Just Another Discord Bot) is a discord bot which gives you the option of self-hosting.<br/>
 If you simply want to try have this bot, invite it by clicking the link below, otherwise, have a look around.<br/>
 https://discordapp.com/oauth2/authorize?client_id=646342929224302602&scope=bot&permissions=8
 
-# Joining the OpenMod discord server
+# Joining the JADB discord server
 Here is the link to the official server, for support, insights on development and other chatter about the bot
 https://discord.gg/wkFAmc7
 
