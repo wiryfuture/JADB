@@ -7,17 +7,14 @@ if (!process.env.JADB_BOT_TOKEN) {
     process.exit();
 }
 const discord_js_1 = require("discord.js");
-const onmessage_1 = require("./onmessage");
+const onmessage_1 = require("./events/onmessage");
+const onguildcreate_1 = require("./events/onguildcreate");
+const onguilddelete_1 = require("./events/onguilddelete");
+const onready_1 = require("./events/onready");
 const prefix = "!";
 const client = new discord_js_1.Client();
 client.login(process.env.JADB_BOT_TOKEN);
-client.on("ready", () => {
-    process.stdout.write("Bot loaded\n");
-});
-client.on("guildCreate", guild => {
-    console.log(guild);
-});
-client.on("guildDelete", guild => {
-    console.log(guild);
-});
-client.on("message", async (message) => { onmessage_1.OnMessage(client, prefix, message); });
+client.on("ready", async () => { onready_1.onReady(); });
+client.on("guildCreate", async (guild) => { onguildcreate_1.onGuildCreate(client, guild); });
+client.on("guildDelete", async (guild) => { onguilddelete_1.onGuildDelete(client, guild); });
+client.on("message", async (message) => { onmessage_1.onMessage(client, prefix, message); });

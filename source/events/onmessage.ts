@@ -1,4 +1,4 @@
-export const OnMessage = async (client:any , prefix: string, message: any) => {
+export const onMessage = async (client:any , prefix: string, message: any) => {
     if (message.author.bot) return
     if (!message.content.startsWith(prefix)) return
     

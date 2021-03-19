@@ -6,24 +6,21 @@ if (!process.env.JADB_BOT_TOKEN) { // handle no bot token environment variable
 }
 
 import {Client} from "discord.js"
-import {OnMessage} from "./onmessage"
+import {onMessage} from "./events/onmessage"
+import {onGuildCreate} from "./events/onguildcreate"
+import {onGuildDelete} from "./events/onguilddelete"
+import {onReady} from "./events/onready"
 
 const prefix = "!"
 
 const client = new Client()
 client.login(process.env.JADB_BOT_TOKEN);
 
-client.on("ready", () => {
-    process.stdout.write("Bot loaded\n")
-})
+client.on("ready", async () => {onReady()})
 
-client.on("guildCreate", guild => {
-    console.log(guild)
-})
+client.on("guildCreate", async guild => {onGuildCreate(client, guild)})
 
-client.on("guildDelete", guild => { 
-    console.log(guild)
-})
+client.on("guildDelete", async guild => {onGuildDelete(client, guild)})
 
-client.on("message", async message => {OnMessage(client, prefix, message)})
+client.on("message", async message => {onMessage(client, prefix, message)})
 
