@@ -1,28 +1,31 @@
 {
-  "name": "nyaaa",
-  "version": "1.0.0",
-  "description": "bot",
-  "main": "index.js",
+  "name": "jadb",
+  "version": "0.1.2",
+  "description": "A discord bot for moderation and more",
+  "main": "build/bot.js",
   "dependencies": {
     "@discordjs/opus": "^0.4.0",
-    "discord.js": "github:discordjs/discord.js",
-    "dotenv": "^8.2.0",
-    "global": "^4.4.0",
-    "mongoose": "^5.11.19",
-    "nodemon": "^2.0.7"
+    "discord.js": "^12.5.1",
+    "ffmpeg-static": "^4.2.7",
+    "mongoose": "^5.12.1"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "bot": "node build/bot.js",
+    "start": "tsc && node build/bot.js",
+    "docker-build": "docker build . -t wiryfuture/jadb",
+    "docker-push": "docker push wiryfuture/jadb"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/wiryfuture/nyaaa.git"
-  },
+  "repository": "git+https://github.com/wiryfuture/nyaaa.git",
   "author": "wiryfuture",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/wiryfuture/nyaaa/issues"
   },
-  "homepage": "https://github.com/wiryfuture/nyaaa#readme"
+  "homepage": "https://github.com/wiryfuture/nyaaa#readme",
+  "devDependencies": {
+    "@types/node": "^14.14.35",
+    "tslint": "^6.1.3",
+    "typescript": "^4.2.3"
+  }
 }

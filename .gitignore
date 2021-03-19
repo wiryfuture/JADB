@@ -4,5 +4,3 @@
 /.vs
 /node_modules
 /data
-# PLEASE REMEMBER NOT TO UPLOAD YOUR BOT TOKEN :)
-.env
