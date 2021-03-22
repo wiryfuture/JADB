@@ -10,11 +10,14 @@ import {onMessage} from "./events/onmessage"
 import {onGuildCreate} from "./events/onguildcreate"
 import {onGuildDelete} from "./events/onguilddelete"
 import {onReady} from "./events/onready"
+import {loadCommands} from "./misc/loadcommands"
 
 const prefix = "!"
 
 const client = new Client()
 client.login(process.env.JADB_BOT_TOKEN);
+
+const commands = loadCommands()
 
 client.on("ready", async () => {onReady()})
 
@@ -22,5 +25,5 @@ client.on("guildCreate", async guild => {onGuildCreate(client, guild)})
 
 client.on("guildDelete", async guild => {onGuildDelete(client, guild)})
 
-client.on("message", async message => {onMessage(client, prefix, message)})
+client.on("message", async message => {onMessage(client, prefix, commands, message)})
 
