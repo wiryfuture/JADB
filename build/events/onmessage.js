@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.onMessage = void 0;
-exports.onMessage = async (client, prefix, commands, message) => {
+const onMessage = async (client, prefix, commands, message) => {
     if (message.author.bot)
         return;
     if (!message.content.startsWith(prefix))
@@ -21,3 +21,4 @@ exports.onMessage = async (client, prefix, commands, message) => {
         message.reply("poggers");
     }
 };
+exports.onMessage = onMessage;
