@@ -7,6 +7,5 @@ export const loadCommands = () => {
         const c = require(`${process.cwd()}/source/commands/${file}`)
         commands.set(c.name, c)
     }
-    console.log(commands)
     return commands
 }
