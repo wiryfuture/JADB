@@ -1,3 +1,7 @@
 node_modules
 dockerfile
 .dockerignore
+.gitignore
+README.md 
+LICENSE
+.github
