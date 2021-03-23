@@ -1,4 +1,6 @@
-export const onMessage = async (client:any , prefix: string, commands:Map<string, any>, message: any) => {
+import { Client, Message } from "discord.js";
+
+export const onMessage = async (client: Client , prefix: string, commands:Map<string, any>, message: Message) => {
     if (message.author.bot) return
     if (!message.content.startsWith(prefix)) return
     
