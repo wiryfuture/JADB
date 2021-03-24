@@ -13,14 +13,21 @@ module.exports = {
             // Delete messages by full 100s as much as possible
             for (let x = 0; x < Math.floor(deleteCount / 100); x++) {
                 const fetched = await message.channel.messages.fetch({ limit: 100 })
-                await message.channel.bulkDelete(fetched).catch(error => message.reply(`Couldn't delete messages because of: ${error}`))
+                await message.channel.bulkDelete(fetched)
+                .then(() => {
+                    message.reply("Deleted " + deleteCount + " messages.").then(message => {message.delete({timeout: 5000})})
+                })
+                .catch(error => message.reply(`Couldn't delete messages because of: ${error}`)).then(message => {message.delete({timeout: 10000})})
             }
         }
         // Delete remainder of messages below 100 here
         if (deleteCount % 100) {
             const fetched = await message.channel.messages.fetch({ limit: deleteCount % 100 })
-            await message.channel.bulkDelete(fetched).catch(error => message.reply(`Couldn't delete messages because of: ${error}`))
+            await message.channel.bulkDelete(fetched)
+                .then(() => {
+                    message.reply("Deleted " + deleteCount + " messages.").then(message => {message.delete({timeout: 5000})})
+                })
+                .catch(error => message.reply(`Couldn't delete messages because of: ${error}`)).then(message => {message.delete({timeout: 10000})})
         }
-        message.reply("Deleted " + deleteCount + " messages.").then(message => {message.delete({timeout: 5000})})
     },
 }

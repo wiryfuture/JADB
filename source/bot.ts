@@ -21,7 +21,7 @@ import {loadCommands} from "./misc/loadcommands"
 
 // Connect to mongodb
 connect(process.env.JADB_MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
-connection.on("error", (console.error.bind(console, "!! mongoDB connection failed !!")))
+connection.on("error", (console.error.bind(console, "!! mongoDB connection failed !!"))) // handle errors (or don't)
 
 const prefix = "!"
 const client = new Client()

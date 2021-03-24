@@ -7,4 +7,5 @@ export const onGuildCreate = async (client: Client, guild: Guild) => {
   var genericserverdoc = new servermodel({"serveruuid": guild.id})
   // creates new entry under server with server uuid and defaults
   await genericserverdoc.save()
+  console.log("Created guild entry for", guild.id)
 }

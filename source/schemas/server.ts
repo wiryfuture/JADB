@@ -14,4 +14,4 @@ const serverschema = new Schema({
     welcome_message: {type: String, default: "Say hello to {{user}}!"}
 })
 
-export const servermodel = model("server", serverschema)
+export const servermodel = model("servers", serverschema)
