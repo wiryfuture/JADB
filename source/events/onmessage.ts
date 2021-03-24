@@ -1,7 +1,9 @@
 import { Client, Message } from "discord.js"
 import { servermodel } from "../schemas/server"
 
-export const onMessage = async (client: Client, commands:Map<string, any>, message: Message) => {
+
+
+export const onMessage = async (client: Client, commands:Map<string, any>, message: Message, cooldowns: Map<String, any>) => {
     if (message.author.bot) return
 
     // Get prefix from db or use default
@@ -14,6 +16,22 @@ export const onMessage = async (client: Client, commands:Map<string, any>, messa
         cmd => {if (cmd.aliases.includes(commandName)) return cmd } 
     )        
 
+    // Check cooldowns
+    if (!cooldowns.has(command.name)) { cooldowns.set(command.name, new Map())}
+    const now = Date.now()
+    const timestamps =  cooldowns.get(command.name)
+    let cooldownamount: number = command.cooldown * 1000 // cooldown should be in seconds
+    if (timestamps.has(message.author.id)) {
+        const expirationtime = timestamps.get(message.author.id) + cooldownamount
+        if (now < expirationtime) {
+            const timeleft = (expirationtime - now) /1000
+            message.delete()
+            return message.reply(`You need to wait ${timeleft.toFixed(1)}s before issuing this command again!`)
+                .then(message => {message.delete({timeout: 2000})})
+        }
+    }
+    timestamps.set(message.author.id, now)
+    setTimeout(() => timestamps.delete(message.author.id), cooldownamount)
     // Executes the command given by the issuer
     try {
         command.execute(client, message, args);

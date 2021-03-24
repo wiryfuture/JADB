@@ -27,6 +27,8 @@ const client = new Client()
 client.login(process.env.JADB_BOT_TOKEN);
 
 const commands = loadCommands()
+const cooldowns = new Map()
+cooldowns.set("filler", "blamets")
 
 client.on("ready", async () => {onReady()})
 
@@ -34,5 +36,4 @@ client.on("guildCreate", async guild => {onGuildCreate(client, guild)})
 
 client.on("guildDelete", async guild => {onGuildDelete(client, guild)})
 
-client.on("message", async message => {onMessage(client, commands, message)})
-
+client.on("message", async message => {onMessage(client, commands, message, cooldowns)})
