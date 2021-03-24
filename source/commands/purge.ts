@@ -7,7 +7,6 @@ module.exports = {
         // Checks if the command issuer is a moderator on the server or has the manage messages permission
         if (!message.guild.member(message.author).hasPermission("MANAGE_MESSAGES"))
             return message.reply("Sorry, you don't have permissions to use this!").then(message => {message.delete({timeout: 2000})})
-        
         var deleteCount = parseInt(args[0], 10);
             
         if (Math.floor(deleteCount / 100)) {

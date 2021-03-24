@@ -4,16 +4,26 @@ if (!process.env.JADB_BOT_TOKEN) { // handle no bot token environment variable
     process.exitCode = 1
     process.exit()
 }
+if (!process.env.JADB_MONGODB) { // handle when no mongodb connection string is passed
+    process.stderr.write("\n!!! No mongodb string provided !!!\n")
+    process.stderr.write("!!! Set env JADB_MONGODB to the connection string !!!\n\n")
+    process.exitCode = 1
+    process.exit()
+}
 
 import {Client} from "discord.js"
+import {connect, connection} from "mongoose"
 import {onMessage} from "./events/onmessage"
 import {onGuildCreate} from "./events/onguildcreate"
 import {onGuildDelete} from "./events/onguilddelete"
 import {onReady} from "./events/onready"
 import {loadCommands} from "./misc/loadcommands"
 
-const prefix = "!"
+// Connect to mongodb
+connect(process.env.JADB_MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
+connection.on("error", (console.error.bind(console, "!! mongoDB connection failed !!")))
 
+const prefix = "!"
 const client = new Client()
 client.login(process.env.JADB_BOT_TOKEN);
 
