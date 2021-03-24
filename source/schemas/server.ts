@@ -3,7 +3,7 @@ const { Schema, model } = mongoose
 
 // Server Schema
 const serverschema = new Schema({
-    serveruuid: {type: String},
+    uuid: {type: String},
     datejoined: {type: Date, default: Date.now},
     prefix: {type: String, default: "!"},
     logging: {type: Boolean, default: false},

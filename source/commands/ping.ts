@@ -5,7 +5,7 @@ module.exports = {
     guildonly: false,
     execute: async (client, message) => {
         message.delete()
-            const m = await message.channel.send("Ping?")
+            const m = await message.reply("Ping?")
             m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ws.ping)}ms`)
     }
 }

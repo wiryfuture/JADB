@@ -23,7 +23,6 @@ import {loadCommands} from "./misc/loadcommands"
 connect(process.env.JADB_MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
 connection.on("error", (console.error.bind(console, "!! mongoDB connection failed !!"))) // handle errors (or don't)
 
-const prefix = "!"
 const client = new Client()
 client.login(process.env.JADB_BOT_TOKEN);
 
@@ -35,5 +34,5 @@ client.on("guildCreate", async guild => {onGuildCreate(client, guild)})
 
 client.on("guildDelete", async guild => {onGuildDelete(client, guild)})
 
-client.on("message", async message => {onMessage(client, prefix, commands, message)})
+client.on("message", async message => {onMessage(client, commands, message)})
 
