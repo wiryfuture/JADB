@@ -1,12 +1,15 @@
-import { Client, Message } from "discord.js";
+import { Client, Message } from "discord.js"
+import { servermodel } from "../schemas/server"
 
-export const onMessage = async (client: Client , prefix: string, commands:Map<string, any>, message: Message) => {
+export const onMessage = async (client: Client, commands:Map<string, any>, message: Message) => {
     if (message.author.bot) return
-    if (!message.content.startsWith(prefix)) return
+
+    // Get prefix from db or use default
+    const prefix = (message.guild.id) ? (await servermodel.findOne({ uuid: message.guild.id})).prefix : "!"
+    if (!message.content.startsWith(prefix)) return // don't care about stuff not aimed at the bot
     
     const args: Array<any> = message.content.slice(prefix.length).trim().split(/ +/g);
     const commandName = args.shift().toLowerCase();
-
     const command = commands.get(commandName) || commands.forEach(
         cmd => {if (cmd.aliases.includes(commandName)) return cmd } 
     )        
@@ -18,9 +21,5 @@ export const onMessage = async (client: Client , prefix: string, commands:Map<st
         // Tells the user if the command failed to run
         console.error(error);
         message.reply('there was an error trying to execute that command!');
-    }
-
-    if (commandName == "pog") {
-        message.reply("poggers")
     }
 }
