@@ -1,8 +1,6 @@
 import { Client, Message } from "discord.js"
 import { servermodel } from "../schemas/server"
 
-
-
 export const onMessage = async (client: Client, commands:Map<string, any>, message: Message, cooldowns: Map<String, any>) => {
     if (message.author.bot) return
 
@@ -15,6 +13,11 @@ export const onMessage = async (client: Client, commands:Map<string, any>, messa
     const command = commands.get(commandName) || commands.forEach(
         cmd => {if (cmd.aliases.includes(commandName)) return cmd } 
     )        
+
+    // Stop running the command if it's in a dm and that isn't allowed
+    if (!command.guildonly) {
+        return message.reply("This command can only be run in guilds, sry.")
+    }
 
     // Check cooldowns
     if (!cooldowns.has(command.name)) { cooldowns.set(command.name, new Map())}
