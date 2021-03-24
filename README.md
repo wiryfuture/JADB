@@ -7,5 +7,9 @@ https://discordapp.com/oauth2/authorize?client_id=646342929224302602&scope=bot&p
 Here is the link to the official server, for support, insights on development and other chatter about the bot
 https://discord.gg/wkFAmc7
 
+# Getting set up
+We're moving to using docker to be ephemeral (oh yeah!), so all you need to do to self host is grab the image from https://hub.docker.com/repository/docker/wiryfuture/jadb and run it (after adding your bot token and mongodb connection string as environment variables of course!). 
+Optionally, you could clone/fork the source and build the image yourself I suppose.
+
 # How to invite to your own server
 To invite the bot once you've gotten it working, get it's client ID and replace the numbers in this link with it https://discordapp.com/oauth2/authorize?client_id=123456789012345678&scope=bot&permissions=8.
