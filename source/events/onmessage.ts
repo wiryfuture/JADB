@@ -15,7 +15,7 @@ export const onMessage = async (client: Client, commands:Map<string, any>, messa
     )        
 
     // Stop running the command if it's in a dm and that isn't allowed
-    if (!command.guildonly) {
+    if (command.guildonly && message.guild.id) {
         return message.reply("This command can only be run in guilds, sry.")
     }
 
