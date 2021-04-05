@@ -2,17 +2,16 @@ import { Client, Message } from "discord.js"
 import { servermodel } from "../schemas/server"
 
 export const onMessage = async (client: Client, commands:Map<string, any>, message: Message, cooldowns: Map<String, any>) => {
-    if (message.author.bot) return
+    if (message.author.bot || message.content.length === 0) return
 
     // Get prefix from db or use default
     const prefix = (message.guild.id) ? (await servermodel.findOne({ uuid: message.guild.id})).prefix : "!"
     if (!message.content.startsWith(prefix)) return // don't care about stuff not aimed at the bot
     
-    const args: Array<any> = message.content.slice(prefix.length).trim().split(/ +/g);
-    const commandName = args.shift().toLowerCase();
-    const command = commands.get(commandName) || commands.forEach(
-        cmd => {if (cmd.aliases.includes(commandName)) return cmd } 
-    )        
+    const args: Array<any> = message.content.slice(prefix.length).trim().split(/ +/g)
+    const commandName: string = args.shift().toLowerCase()
+    const command = commands.get(commandName) || commands.forEach(cmd => {if (cmd.aliases && cmd.aliases.includes(commandName)) return cmd})
+    console.log(command)
 
     // Stop running the command if it's in a dm and that isn't allowed
     if (command.guildonly && !message.guild.id) {
@@ -37,10 +36,10 @@ export const onMessage = async (client: Client, commands:Map<string, any>, messa
     setTimeout(() => timestamps.delete(message.author.id), cooldownamount)
     // Executes the command given by the issuer
     try {
-        command.execute(client, message, args);
+        command.execute(client, message, args)
     } catch (error) {
         // Tells the user if the command failed to run
-        console.error(error);
-        message.reply('there was an error trying to execute that command!');
+        console.error(error)
+        message.reply('there was an error trying to execute that command!')
     }
 }
